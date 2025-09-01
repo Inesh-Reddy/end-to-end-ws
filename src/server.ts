@@ -64,7 +64,6 @@ server.on("upgrade", (req, socket, head) => {
   }
 
   wss.handleUpgrade(req, socket, head, (ws) => {
-    // attach decoded JWT payload to socket for later use
     (ws as ExtWebSocket).user = payload;
     (ws as ExtWebSocket).subscriptions = new Set();
     (ws as ExtWebSocket).lastPong = Date.now();

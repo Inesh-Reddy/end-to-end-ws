@@ -1,12 +1,11 @@
-// src/node-client.ts
 import WebSocket from "ws";
 
-const TOKEN = process.env.TEST_JWT || "<paste-your-jwt-here>"; // create a JWT for testing
+const TOKEN = process.env.TEST_JWT || "<paste-your-jwt-here>";
 const URL = `ws://localhost:3000/ws?token=${encodeURIComponent(TOKEN)}`;
 
 let ws: WebSocket | null = null;
 let shouldReconnect = true;
-let delay = 1000; // initial backoff
+let delay = 1000;
 const MAX_DELAY = 30_000;
 
 function connect() {
@@ -15,15 +14,13 @@ function connect() {
 
   ws.on("open", () => {
     console.log("Connected");
-    delay = 1000; // reset backoff
-    // subscribe to BTCUSDT
+    delay = 1000;
     ws!.send(JSON.stringify({ type: "subscribe", symbol: "BTCUSDT" }));
   });
 
   ws.on("message", (data) => {
     const msg = JSON.parse(data.toString());
     if (msg.type === "ping") {
-      // reply with pong
       ws!.send(JSON.stringify({ type: "pong" }));
       return;
     }
@@ -54,7 +51,6 @@ function connect() {
 
 connect();
 
-// stop reconnects on ctrl+c
 process.on("SIGINT", () => {
   shouldReconnect = false;
   try {
